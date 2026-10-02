@@ -1,23 +1,24 @@
 :root {
-  --bg: #f6f5f0;
+  /* Anhira: neutral ink palette. Each app page sets its own colors. */
+  --bg: #fafaf9;
   --surface: #ffffff;
-  --text: #1d2420;
-  --muted: #5d6862;
-  --line: #e2e1d9;
-  --accent: #2f7a4f;
-  --accent-soft: #e4efe7;
+  --text: #18181b;
+  --muted: #66666d;
+  --line: #e7e5e4;
+  --accent: #18181b;
+  --accent-soft: #f0efed;
   --max: 680px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111613;
-    --surface: #18201b;
-    --text: #e8ece9;
-    --muted: #9aa69f;
-    --line: #26302a;
-    --accent: #6fcf97;
-    --accent-soft: #1d2b22;
+    --bg: #0f0f10;
+    --surface: #18181b;
+    --text: #ededee;
+    --muted: #9b9ba2;
+    --line: #27272a;
+    --accent: #ededee;
+    --accent-soft: #232326;
   }
 }
 
@@ -92,7 +93,7 @@ p, li { color: var(--text); }
   margin: 0 0 8px;
 }
 
-a { color: var(--accent); }
+a { color: var(--accent); text-underline-offset: 3px; }
 
 .card {
   display: block;
@@ -106,7 +107,10 @@ a { color: var(--accent); }
   transition: border-color 0.15s;
 }
 
-a.card:hover { border-color: var(--accent); }
+a.card:hover { border-color: var(--app, var(--accent)); }
+
+/* App cards: set style="--app: #hex" on each card to show that app's color. */
+.card.app { border-left: 4px solid var(--app, var(--line)); }
 
 .card .tag {
   display: inline-block;
@@ -114,7 +118,7 @@ a.card:hover { border-color: var(--accent); }
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--muted);
   background: var(--accent-soft);
   padding: 3px 9px;
   border-radius: 999px;
