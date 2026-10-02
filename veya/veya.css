@@ -159,3 +159,79 @@ body.veya {
 
 .veya footer.site { border-top-color: var(--line); }
 .veya footer.site a { color: var(--muted); }
+
+/* Support page */
+.veya h1 .serif { font-size: clamp(44px, 9vw, 56px); }
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 28px 0 8px;
+  padding: 18px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(61, 220, 151, 0.35);
+  background: var(--accent-soft);
+  text-decoration: none;
+}
+
+.contact span { color: var(--muted); font-size: 14px; }
+.contact strong { color: var(--accent); font-size: 19px; }
+.contact:hover { border-color: var(--accent); }
+
+details {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin-top: 10px;
+  padding: 0 20px;
+}
+
+details[open] { border-color: rgba(61, 220, 151, 0.28); }
+
+summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 28px 16px 0;
+  font-weight: 600;
+  position: relative;
+}
+
+summary::-webkit-details-marker { display: none; }
+
+summary::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 22px;
+  font-weight: 400;
+}
+
+details[open] summary::after { content: "–"; }
+
+details p {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+details p strong { color: var(--text); font-weight: 500; }
+
+/* Privacy page */
+.policy h2 { margin-top: 40px; font-size: 19px; }
+.policy p { color: var(--muted); }
+.policy p strong { color: var(--text); font-weight: 500; }
+
+.summary {
+  margin: 24px 0 32px;
+  padding: 6px 22px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(61, 220, 151, 0.35);
+  background: var(--accent-soft);
+}
+
+.summary h2 { margin: 14px 0 6px; font-size: 16px; color: var(--accent); }
+.summary ul { margin: 0 0 8px; padding-left: 20px; }
+.summary li { margin: 4px 0; }
