@@ -56,6 +56,22 @@
       leaf_spot: "Leaf spot", sunburn: "Sunburn"
     }
   };
+  // Temperature unit: remembered per visitor; US visitors start in °F.
+  var UNIT = (function () {
+    try { var u = localStorage.getItem("veya-temp-unit"); if (u === "C" || u === "F") return u; } catch (e) {}
+    return /^en-US/i.test(navigator.language || "") ? "F" : "C";
+  })();
+  function setUnit(u) {
+    UNIT = u;
+    try { localStorage.setItem("veya-temp-unit", u); } catch (e) {}
+  }
+  function cToU(c) { return UNIT === "F" ? c * 9 / 5 + 32 : c; }
+  function tempRange(r) {
+    if (!r || !isNum(r.min) && !isNum(r.max)) return null;
+    var lo = isNum(r.min) ? r.min : r.max, hi = isNum(r.max) ? r.max : r.min;
+    var a = fmt(cToU(lo)), b = fmt(cToU(hi));
+    return (a === b ? a : a + "–" + b) + (UNIT === "F" ? " °F" : " °C");
+  }
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   // ---------- Small helpers ----------
@@ -82,7 +98,6 @@
     var a = conv.f(lo), b = conv.f(hi);
     return { main: main, sub: (a === b ? fmt(a) : fmt(a) + "–" + fmt(b)) + conv.unit };
   }
-  var toF = { f: function (c) { return c * 9 / 5 + 32; }, unit: " °F" };
   var toLux = { f: function (fc) { return fc * 10.764; }, unit: " lux" };
   var toFt = { f: function (m) { return m * 3.28084; }, unit: " ft" };
   function monthsText(list) {
@@ -141,7 +156,32 @@
     });
     return d;
   }
-  function prose(text, cls) { return hasText(text) ? el("p", "sh-prose" + (cls ? " " + cls : ""), text.trim()) : null; }
+  // Long notes start folded to a few lines, with a button to open them.
+  var proseCount = 0;
+  function prose(text, cls) {
+    if (!hasText(text)) return null;
+    var p = el("p", "sh-prose" + (cls ? " " + cls : ""), text.trim());
+    if (text.trim().length < 420) return p;
+    var id = "notes-" + (++proseCount);
+    p.id = id;
+    var box = el("div", "fold");
+    box.appendChild(p);
+    var btn = el("button", "more", "Show more");
+    btn.type = "button";
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", id);
+    btn.addEventListener("click", function () {
+      var open = box.classList.toggle("open");
+      if (open) box.style.setProperty("--full", p.scrollHeight + "px");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Show less" : "Show more";
+      if (!open && box.getBoundingClientRect().top < 0) box.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+    var wrap = el("div", "fold-wrap");
+    wrap.appendChild(box);
+    wrap.appendChild(btn);
+    return wrap;
+  }
   function chips(list, cls) {
     if (!list.length) return null;
     var w = el("div", "sh-chips");
@@ -154,6 +194,90 @@
     return n;
   }
   function r(rangeObj, key) { return rangeObj ? { k: key, v: rangeObj.main, sub: rangeObj.sub } : null; }
+
+  // ---------- Visuals ----------
+  // Bloom months: a 12-month strip with the flowering months lit.
+  function monthStrip(list) {
+    var on = (Array.isArray(list) ? list : []).filter(function (x) { return x >= 1 && x <= 12; });
+    if (!on.length) return null;
+    var w = el("div", "months");
+    w.setAttribute("role", "img");
+    w.setAttribute("aria-label", "Blooms " + monthsText(on));
+    MONTHS.forEach(function (m, i) {
+      var c = el("span", on.indexOf(i + 1) !== -1 ? "on" : null, m.charAt(0));
+      c.title = m;
+      w.appendChild(c);
+    });
+    return w;
+  }
+
+  // Light: where the range sits between deep shade and full sun (log scale, 100–10,000 fc).
+  function lightScale(r) {
+    if (!r || !isNum(r.min) || !isNum(r.max)) return null;
+    function pos(fc) { return Math.max(0, Math.min(100, (Math.log10(Math.max(fc, 1)) - 2) / 2 * 100)); }
+    var w = el("div", "scale light-scale");
+    w.setAttribute("role", "img");
+    w.setAttribute("aria-label", "Light " + fmt(r.min) + " to " + fmt(r.max) + " foot-candles, on a scale from deep shade to full sun");
+    var track = el("div", "track");
+    var band = el("div", "band");
+    band.style.left = pos(r.min) + "%";
+    band.style.width = Math.max(2, pos(r.max) - pos(r.min)) + "%";
+    track.appendChild(band);
+    w.appendChild(track);
+    var ends = el("div", "ends");
+    ends.appendChild(el("span", null, "Deep shade"));
+    ends.appendChild(el("span", null, "Full sun"));
+    w.appendChild(ends);
+    return w;
+  }
+
+  // Temperature: seasonal bands on one thermometer.
+  function tempScale(bands) { // [{cls, r}]
+    bands = bands.filter(function (b) { return b.r && isNum(b.r.min) && isNum(b.r.max); });
+    if (!bands.length) return null;
+    var lo = 0, hi = 40;
+    bands.forEach(function (b) { lo = Math.min(lo, Math.floor((b.r.min - 2) / 5) * 5); hi = Math.max(hi, Math.ceil((b.r.max + 2) / 5) * 5); });
+    function pos(c) { return (c - lo) / (hi - lo) * 100; }
+    var w = el("div", "scale temp-scale");
+    w.setAttribute("aria-hidden", "true"); // the numbers above already say this
+    var track = el("div", "track");
+    bands.forEach(function (b) {
+      var band = el("div", "band " + b.cls);
+      band.style.left = pos(b.r.min) + "%";
+      band.style.width = Math.max(2, pos(b.r.max) - pos(b.r.min)) + "%";
+      track.appendChild(band);
+    });
+    w.appendChild(track);
+    var ticks = el("div", "ticks");
+    for (var c = lo; c <= hi; c += 10) {
+      var t = el("span", null, fmt(cToU(c)) + "°");
+      t.style.left = pos(c) + "%";
+      ticks.appendChild(t);
+    }
+    w.appendChild(ticks);
+    return w;
+  }
+
+  function unitToggle() {
+    var g = el("div", "units");
+    g.setAttribute("role", "group");
+    g.setAttribute("aria-label", "Temperature unit");
+    ["C", "F"].forEach(function (u) {
+      var b = el("button", null, "°" + u);
+      b.type = "button";
+      b.dataset.unit = u;
+      b.setAttribute("aria-pressed", String(UNIT === u));
+      b.addEventListener("click", function () {
+        if (UNIT === u) return;
+        setUnit(u);
+        render(CURRENT, document.getElementById("sheet"));
+        var again = document.querySelector('.units button[data-unit="' + u + '"]');
+        if (again) again.focus();
+      });
+      g.appendChild(b);
+    });
+    return g;
+  }
 
   // ---------- Sections ----------
   function sectionWatering(d) {
@@ -175,6 +299,7 @@
     var c = card("i-light", "Light");
     var n = add(c, [
       prose(d.text, "lead-ish"),
+      lightScale(d.footCandles),
       rows([
         r(range(d.footCandles, " fc", toLux), "Intensity"),
         r(range(d.ppfd, " µmol/m²/s"), "PPFD"),
@@ -184,13 +309,13 @@
     return n ? c : null;
   }
 
-  function climateCol(title, s) {
+  function climateCol(title, s, cls) {
     if (!s) return null;
-    var t = range(s.tempC, " °C", toF), h = range(s.humidity, "% humidity");
+    var t = tempRange(s.tempC), h = range(s.humidity, "% humidity");
     if (!t && !h) return null;
-    var col = el("div", "sh-season");
+    var col = el("div", "sh-season " + (cls || ""));
     if (title) col.appendChild(el("span", "k", title));
-    if (t) { col.appendChild(el("span", "v", t.main)); col.appendChild(el("span", "sub", t.sub + " · night–day")); }
+    if (t) { col.appendChild(el("span", "v", t)); col.appendChild(el("span", "sub", "Night to day")); }
     if (h) col.appendChild(el("span", "h", h.main));
     return col;
   }
@@ -200,13 +325,19 @@
     var c = card("i-climate", "Climate");
     var cols = el("div", "sh-seasons");
     var n = 0;
+    var scale;
     if (d.mode === "seasonal") {
-      n += add(cols, [climateCol("Summer (growing)", d.summer), climateCol("Winter (rest)", d.winter)]);
-      if (n) c.querySelector(".sh-head").appendChild(el("span", "tag", "Seasonal"));
+      n += add(cols, [climateCol("Summer (growing)", d.summer, "summer"), climateCol("Winter (rest)", d.winter, "winter")]);
+      scale = tempScale([{ cls: "winter", r: d.winter && d.winter.tempC }, { cls: "summer", r: d.summer && d.summer.tempC }]);
     } else {
-      n += add(cols, [climateCol("All year", d.allYear)]);
+      n += add(cols, [climateCol("All year", d.allYear, "summer")]);
+      scale = tempScale([{ cls: "summer", r: d.allYear && d.allYear.tempC }]);
     }
-    if (n) c.appendChild(cols);
+    if (n) {
+      c.querySelector(".sh-head").appendChild(unitToggle());
+      c.appendChild(cols);
+      if (scale) c.appendChild(scale);
+    }
     n += add(c, [
       rows([r(range(d.elevationM, " m", toFt), "Elevation")]),
       hasText(d.nativeRange) ? rows([{ k: "Native range", v: d.nativeRange.trim() }]) : null
@@ -222,10 +353,12 @@
       return c;
     }
     var scents = labels("scent", d.scent), when = labels("fragrantWhen", d.fragrantWhen), after = labels("afterFlowering", d.afterFlowering);
+    var season = monthsText(d.months);
     var n = add(c, [
+      season ? el("p", "season-line", season === "All year" ? "Blooms all year" : "Blooms " + season) : null,
+      monthStrip(d.months),
       rows([
         d.flowering === "rarely_indoors" ? { k: "Flowering", v: "Rarely indoors" } : null,
-        { k: "Season", v: monthsText(d.months) },
         r(range(d.flowersLastDays, d.flowersLastDays && d.flowersLastDays.max === 1 ? " day" : " days"), "Flowers last"),
         { k: "Color", v: hasText(d.color) ? d.color.trim() : null },
         { k: "Fragrance", v: label("fragrance", d.fragrance) },
@@ -234,7 +367,7 @@
         { k: "Flowers held", v: label("flowersHeld", d.flowersHeld) },
         { k: "After flowering", v: after.join(", ") || null },
         d.bloomsOnceThenDies === true ? { k: "Life cycle", v: "Blooms once, then dies. Keep the pups." } : null,
-        isNum(d.nightDropC) ? { k: "Night drop", v: fmt(d.nightDropC) + " °C cooler at night", sub: fmt(d.nightDropC * 9 / 5) + " °F" } : null,
+        isNum(d.nightDropC) ? { k: "Night drop", v: (UNIT === "F" ? fmt(d.nightDropC * 9 / 5) + " °F" : fmt(d.nightDropC) + " °C") + " cooler at night" } : null,
         isNum(d.dryRestWeeks) ? { k: "Dry rest", v: fmt(d.dryRestWeeks) + (d.dryRestWeeks === 1 ? " week" : " weeks") } : null,
         isNum(d.photoperiodHours) ? { k: "Photoperiod", v: fmt(d.photoperiodHours) + " hours of light" } : null
       ]),
@@ -279,7 +412,10 @@
     return wrap;
   }
 
+  var CURRENT = null;
   function render(share, root) {
+    CURRENT = share;
+    proseCount = 0;
     var name = share.name || {};
     var on = Array.isArray(share.sections) ? share.sections : [];
     function shared(key) { return on.indexOf(key) !== -1; }
@@ -289,12 +425,11 @@
     if (title) document.title = title + " · Care sheet · Veya";
 
     var meta = el("p", "sh-meta");
-    meta.appendChild(el("span", "by", "Shared by " + (hasText(share.displayName) ? share.displayName.trim() : "a Veya grower")));
+    meta.appendChild(el("span", "by", "Care sheet shared by " + (hasText(share.displayName) ? share.displayName.trim() : "a Veya grower")));
     var upd = dateText(share.updatedAt);
     if (upd) meta.appendChild(el("span", null, "Updated " + upd));
     if (name.gbifMatch === "exact") meta.appendChild(el("span", "ok", "Name verified with GBIF"));
 
-    root.appendChild(el("p", "eyebrow", "Care sheet"));
     root.appendChild(nameBlock(name));
     root.appendChild(meta);
 

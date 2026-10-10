@@ -50,12 +50,13 @@ body.veya {
   margin: 0 auto 28px;
   display: grid;
   place-items: center;
-  background: linear-gradient(160deg, #0f1f26, #050a0d);
+  background: linear-gradient(180deg, #0d1a20, #050a0d);
+  overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 0 60px rgba(61, 220, 151, 0.18);
 }
 
-.hero .icon svg { width: 56px; height: 56px; }
+.hero .icon svg { width: 100%; height: 100%; display: block; }
 
 .hero h1 {
   font-size: clamp(44px, 10vw, 64px);
@@ -235,3 +236,86 @@ details p strong { color: var(--text); font-weight: 500; }
 .summary h2 { margin: 14px 0 6px; font-size: 16px; color: var(--accent); }
 .summary ul { margin: 0 0 8px; padding-left: 20px; }
 .summary li { margin: 4px 0; }
+
+/* ---------- Header: Anhira / Veya ---------- */
+.veya .crumbs { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.veya .crumbs .home {
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.veya .crumbs .home:hover { color: var(--text); }
+.veya .crumbs .sep { color: rgba(240, 244, 242, 0.22); }
+.veya .brand { color: var(--text); text-decoration: none; font-weight: 650; }
+.veya header.site a:focus-visible,
+.veya main a:focus-visible,
+.veya button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+@media (max-width: 380px) {
+  .veya nav a { margin-left: 14px; }
+}
+
+/* ---------- Canopy: dappled light drifting behind the top of every Veya page ---------- */
+.veya header.site, .veya main, .veya footer.site { position: relative; z-index: 1; }
+
+.canopy {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 760px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(#000 45%, transparent);
+  mask-image: linear-gradient(#000 45%, transparent);
+}
+
+.canopy span {
+  position: absolute;
+  border-radius: 62% 38% 55% 45% / 48% 60% 40% 52%;
+  filter: blur(42px);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation:
+    canopy-in 2.6s ease-out forwards,
+    canopy-drift var(--d, 46s) ease-in-out infinite alternate;
+  animation-delay: var(--w, 0s), 0s;
+}
+
+/* Leaf-shaped pools of light: mostly green, one warm sun patch, one pale highlight. */
+.canopy span:nth-child(1) { width: 420px; height: 260px; left: -8%;  top: -60px; background: rgba(61, 220, 151, 0.20); --d: 52s; --r: -18deg; }
+.canopy span:nth-child(2) { width: 300px; height: 190px; right: -6%; top: 40px;  background: rgba(61, 220, 151, 0.14); --d: 41s; --r: 24deg; --w: .25s; }
+.canopy span:nth-child(3) { width: 240px; height: 150px; left: 38%;  top: -30px; background: rgba(250, 177, 82, 0.10); --d: 58s; --r: 8deg;  --w: .5s; }
+.canopy span:nth-child(4) { width: 180px; height: 110px; left: 12%;  top: 260px; background: rgba(240, 244, 242, 0.06); --d: 37s; --r: -32deg; --w: .7s; }
+.canopy span:nth-child(5) { width: 360px; height: 200px; right: 8%; top: 300px;  background: rgba(61, 220, 151, 0.09); --d: 63s; --r: 14deg; --w: .9s; }
+.canopy span:nth-child(6) { width: 140px; height: 90px;  left: 62%;  top: 180px; background: rgba(250, 177, 82, 0.07); --d: 33s; --r: -10deg; --w: 1.1s; }
+
+@keyframes canopy-in { to { opacity: 1; } }
+@keyframes canopy-drift {
+  0%   { transform: translate(0, 0) rotate(var(--r, 0deg)) scale(1); }
+  50%  { transform: translate(28px, 14px) rotate(calc(var(--r, 0deg) + 6deg)) scale(1.08); }
+  100% { transform: translate(-22px, 26px) rotate(calc(var(--r, 0deg) - 4deg)) scale(0.96); }
+}
+
+/* ---------- Landing: the two leaves unfold once ---------- */
+.unfurl path {
+  transform-box: view-box;
+  transform-origin: 60px 94px;
+  opacity: 0;
+  animation: unfurl 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.unfurl path:nth-child(1) { --from: rotate(-38deg) scale(0.25); --o: 1;    animation-delay: 0.35s; }
+.unfurl path:nth-child(2) { --from: rotate(34deg) scale(0.25);  --o: 0.75; animation-delay: 0.6s; }
+@keyframes unfurl {
+  from { transform: var(--from); opacity: 0; }
+  60%  { opacity: var(--o); }
+  to   { transform: none; opacity: var(--o); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canopy span { animation: none; opacity: 1; transform: rotate(var(--r, 0deg)); }
+  .unfurl path { animation: none; opacity: var(--o); transform: none; }
+}
