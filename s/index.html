@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plant care sheet · Veya</title>
+  <meta name="description" content="A plant care sheet shared from Veya, the plant collection journal for iPhone.">
+  <meta name="theme-color" content="#050a0d">
+  <!-- Shared care sheets are reached by link or QR code only; keep them out of search engines. -->
+  <meta name="robots" content="noindex, nofollow">
+  <!-- At launch, add the Smart App Banner:
+       <meta name="apple-itunes-app" content="app-id=YOUR_APP_ID, app-argument=https://anhira.net/s/?id=..."> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/veya/veya.css">
+  <link rel="stylesheet" href="/s/share.css">
+</head>
+<body class="veya">
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="/veya/">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M31 56 C 18 44, 10 28, 14 8 C 26 18, 33 36, 31 56 Z" fill="#3ddc97"/>
+          <path d="M33 56 C 42 46, 50 34, 50 16 C 39 24, 33 40, 33 56 Z" fill="#3ddc97" opacity="0.75"/>
+        </svg>
+        Veya
+      </a>
+      <nav>
+        <a href="/veya/">Get Veya</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" id="sheet" aria-live="polite">
+      <p class="state" id="loading">Loading care sheet…</p>
+    </div>
+
+    <div class="wrap" id="after" hidden>
+      <a class="getapp" href="/veya/">
+        <span>Keep this plant in your own collection</span>
+        <strong>Get Veya for iPhone</strong>
+      </a>
+
+      <p class="disclaimer">
+        Shared by a Veya user. Veya doesn't review or verify shared content.
+        <a id="report" href="mailto:support@anhira.net?subject=Report%20a%20shared%20care%20sheet">Report this care sheet</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      Veya is made by <a href="/">Anhira LLC</a>. © 2026
+    </div>
+  </footer>
+
+  <script src="/s/share.js"></script>
+</body>
+</html>
