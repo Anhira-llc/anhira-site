@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["GJU6RYQ97U.com.anhira.rootnote"],
+        "components": [
+          {
+            "/": "/s/",
+            "?": { "id": "?*" },
+            "comment": "Shared care sheets open in Veya when it's installed"
+          }
+        ]
+      }
+    ]
+  }
+}
