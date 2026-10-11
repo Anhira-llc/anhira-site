@@ -1,64 +1,45 @@
 {
-  "schemaVersion": 1,
-  "shareID": "test123",
-  "speciesKey": "name:gastrochilus japonicus",
+  "v": 1,
+  "id": "test123",
+  "updated": "2026-10-10",
   "listed": false,
-  "displayName": "",
-  "sections": ["wateringRoots", "light", "climate", "bloom", "plantHealth", "careNotes", "description"],
-  "createdAt": "2026-10-10",
-  "updatedAt": "2026-10-10",
-  "appVersion": "test",
-
-  "name": {
-    "kingdom": "Plantae",
-    "phylum": "Tracheophyta",
-    "class": "Liliopsida",
-    "order": "Asparagales",
-    "family": "Orchidaceae",
-    "subfamily": "Epidendroideae",
-    "tribe": "Vandeae",
-    "subtribe": "Aeridinae",
-    "genus": "Gastrochilus",
-    "speciesEpithet": "japonicus",
-    "type": "species",
-    "gbifMatch": "exact",
-    "gbifConfidence": 100
-  },
-
-  "wateringRoots": {
-    "growsBest": "mounted",
-    "watering": "slightly_dry",
-    "rootAirflow": "medium",
-    "notes": "Summer (Active Growth)\nFrequency: Water daily or every other day.\nMethod: Fully submerge or heavily spray the mount until the roots turn from silvery-white to bright green.\nTiming: Water in the morning so the leaves dry completely by night to prevent rot.\nFeeding: Add a weak, 1/4-strength orchid fertilizer to the water once a week.\n\nWinter (Cool Rest Period)\nFrequency: Cut back heavily to every 7 to 10 days (or when the plant completely dries out).\nMethod: Give the plant a light morning misting or a very brief rinse rather than a deep soak. The moss cushion should not stay wet.\nFeeding: Stop all fertilizer completely until new green root tips appear in spring."
-  },
-
-  "light": {
-    "text": "Medium-bright, indirect, or filtered light. Protect from harsh direct sun.",
-    "footCandles": { "min": 1000, "max": 2500 }
-  },
-
-  "climate": {
-    "mode": "seasonal",
-    "summer": { "tempC": { "min": 20, "max": 28 }, "humidity": { "min": 70, "max": 90 } },
-    "winter": { "tempC": { "min": 10, "max": 18 }, "humidity": { "min": 60, "max": 70 } },
-    "elevationM": { "min": 200, "max": 2000 },
-    "nativeRange": "Japan (islands like Honshu, Shikoku, and Kyushu), Taiwan, Korea, and parts of Hong Kong"
-  },
-
-  "bloom": {
-    "flowering": "blooms",
-    "months": [6, 7, 8, 9],
-    "flowersLastDays": { "min": 7, "max": 14 },
-    "color": "Pale greenish-yellow to bright golden-yellow.",
-    "fragrance": "faint",
-    "nightDropC": 10,
-    "dryRestWeeks": 12,
-    "notes": "Produces clusters of small, fragrant, dangling flowers that bloom in summer or fall.\n\nPale greenish-yellow to bright golden-yellow. The prominent center lip is stark white with a bright yellow center, heavily decorated with reddish-pink or purple spots."
-  },
-
-  "plantHealth": ["spider_mites", "mealybugs"],
-
-  "careNotes": "Leaf Color Indicator\nHealthy leaves should remain a grassy, light-to-medium green. If they turn deep, dark forest green, they are not getting enough light to trigger future blooms. If they start yellowing or develop red/purple tinting on the leaf edges, they are reaching their maximum light tolerance. If they bleach white or turn brown, they are scorched.\n\nRoot Health & Mounting Dynamics\nRoot Type: These roots are thin and velamen-covered. They love to grip wood texture directly, but they hate suffocating. If you add too much moss over them, they will rot quickly.\nGrowth Habit: They are pendulous (dangling) by nature. Mount the plant slightly upside down or sideways so that water naturally drains out of the leaf crown rather than pooling inside it, which causes fatal crown rot.\n\nPest & Disease Vulnerabilities\nPest Targets: Keep a close eye out for spider mites and mealybugs, which love to hide in the tight, fan-shaped crevices where the leaves overlap.\nFungal Prevention: Because they require high humidity but cool temperatures in the winter, they are highly susceptible to black spot fungus if air movement stalls.\n\nFlowering Characteristics\nSpike Behavior: The short, downward-pointing flower spikes emerge from the base of the lower leaves. Do not mistake them for roots and accidentally clip them or pin them down to the mount.\nFragrance Profile: The blooms are highly fragrant, releasing a sweet, citrusy, or vanilla-pine scent, typically strongest during the morning and midday hours.\n\nWater Quality Constraints\nTDS/EC Tolerance: Like many mountain epiphytes, they prefer clean water with low Total Dissolved Solids (TDS). If your indoor tap water is heavily chlorinated or high in calcium (hard water), consider using rainwater, distilled water, or reverse osmosis (RO) water to prevent root tip dieback.",
-
-  "description": "Gastrochilus japonicus, also known as the yellow pine orchid, is a charming miniature epiphytic orchid native to Japan, Taiwan, Hong Kong, and the Ryukyu Islands.\n\nTiny plants growing up to 8 cm tall with short stems and fleshy leaves (5–10 cm long)."
+  "key": "name:gastrochilus japonicus",
+  "sp": {
+    "g": "Gastrochilus",
+    "e": "japonicus",
+    "h": {
+      "kingdom": "Plantae",
+      "phylum": "Tracheophyta",
+      "class": "Liliopsida",
+      "order": "Asparagales",
+      "family": "Orchidaceae",
+      "subfamily": "Epidendroideae",
+      "tribe": "Vandeae",
+      "subtribe": "Aeridinae"
+    },
+    "w": "slightlyDry",
+    "ra": "medium",
+    "gb": "mounted",
+    "lf": [1000, 2500],
+    "se": true,
+    "st": [20, 28],
+    "sh": [70, 90],
+    "wt": [10, 18],
+    "wh": [60, 70],
+    "el": [200, 2000],
+    "bm": [6, 9],
+    "fl": [7, 14],
+    "nd": 10,
+    "dr": 12,
+    "fr": "faint",
+    "bc": "Pale greenish-yellow to bright golden-yellow.",
+    "fw": "blooms",
+    "pi": ["spider-mites", "mealybugs"],
+    "li": "Medium-bright, indirect, or filtered light. Protect from harsh direct sun.",
+    "nr": "Japan (islands like Honshu, Shikoku, and Kyushu), Taiwan, Korea, and parts of Hong Kong",
+    "wn": "Summer (Active Growth)\nFrequency: Water daily or every other day.\nMethod: Fully submerge or heavily spray the mount until the roots turn from silvery-white to bright green.\nTiming: Water in the morning so the leaves dry completely by night to prevent rot.\nFeeding: Add a weak, 1/4-strength orchid fertilizer to the water once a week.\n\nWinter (Cool Rest Period)\nFrequency: Cut back heavily to every 7 to 10 days (or when the plant completely dries out).\nMethod: Give the plant a light morning misting or a very brief rinse rather than a deep soak. The moss cushion should not stay wet.\nFeeding: Stop all fertilizer completely until new green root tips appear in spring.",
+    "bn": "Produces clusters of small, fragrant, dangling flowers that bloom in summer or fall.\n\nPale greenish-yellow to bright golden-yellow. The prominent center lip is stark white with a bright yellow center, heavily decorated with reddish-pink or purple spots.",
+    "cn": "Leaf Color Indicator\nHealthy leaves should remain a grassy, light-to-medium green. If they turn deep, dark forest green, they are not getting enough light to trigger future blooms. If they start yellowing or develop red/purple tinting on the leaf edges, they are reaching their maximum light tolerance. If they bleach white or turn brown, they are scorched.\n\nRoot Health & Mounting Dynamics\nRoot Type: These roots are thin and velamen-covered. They love to grip wood texture directly, but they hate suffocating. If you add too much moss over them, they will rot quickly.\nGrowth Habit: They are pendulous (dangling) by nature. Mount the plant slightly upside down or sideways so that water naturally drains out of the leaf crown rather than pooling inside it, which causes fatal crown rot.\n\nPest & Disease Vulnerabilities\nPest Targets: Keep a close eye out for spider mites and mealybugs, which love to hide in the tight, fan-shaped crevices where the leaves overlap.\nFungal Prevention: Because they require high humidity but cool temperatures in the winter, they are highly susceptible to black spot fungus if air movement stalls.\n\nFlowering Characteristics\nSpike Behavior: The short, downward-pointing flower spikes emerge from the base of the lower leaves. Do not mistake them for roots and accidentally clip them or pin them down to the mount.\nFragrance Profile: The blooms are highly fragrant, releasing a sweet, citrusy, or vanilla-pine scent, typically strongest during the morning and midday hours.\n\nWater Quality Constraints\nTDS/EC Tolerance: Like many mountain epiphytes, they prefer clean water with low Total Dissolved Solids (TDS). If your indoor tap water is heavily chlorinated or high in calcium (hard water), consider using rainwater, distilled water, or reverse osmosis (RO) water to prevent root tip dieback.",
+    "ds": "Gastrochilus japonicus, also known as the yellow pine orchid, is a charming miniature epiphytic orchid native to Japan, Taiwan, Hong Kong, and the Ryukyu Islands.\n\nTiny plants growing up to 8 cm tall with short stems and fleshy leaves (5–10 cm long)."
+  }
 }

@@ -5,7 +5,10 @@
  * Rules (see qr-share-design.md):
  *  - Missing field = empty  -> the row is simply not shown.
  *  - Unknown field or choice ID = ignore -> never shown, never crashes.
- *  - Choices arrive as fixed IDs; the words shown here come from LABELS below.
+ *  - A share uses the app's own plant format (PlantBundle in PlantTransfer.swift):
+ *    short keys under "sp", choices as the app's codes (e.g. "slightlyDry"), pairs as [low, high].
+ *    fromBundle() below is the only place that knows those short keys.
+ *  - Choices arrive as the app's codes; the words shown here come from LABELS below.
  *  - One unit per number (°C, foot-candles, metres, days, weeks); other units are display only.
  *  - Shared text is always inserted as plain text (textContent), never as HTML.
  */
@@ -33,9 +36,9 @@
   // ---------- Words for choice IDs ----------
   var LABELS = {
     growsBest: { potted: "Potted", mounted: "Mounted", either: "Potted or mounted" },
-    watering: { keep_moist: "Keep moist", slightly_dry: "Slightly dry", dry_out_fully: "Dry out fully" },
+    watering: { keepMoist: "Keep moist", slightlyDry: "Slightly dry", dryOut: "Dry out fully" },
     rootAirflow: { low: "Low", medium: "Medium", high: "High" },
-    flowering: { blooms: "Blooms", rarely_indoors: "Rarely indoors", never: "Never" },
+    flowering: { blooms: "Blooms", rarely: "Rarely indoors", never: "Never" },
     fragrance: { none: "None", faint: "Faint", moderate: "Moderate", strong: "Strong" },
     scent: {
       floral: "Floral", citrus: "Citrus", fruity: "Fruity", honey: "Honey", vanilla: "Vanilla",
@@ -43,17 +46,23 @@
       minty: "Minty", licorice: "Licorice", medicinal: "Medicinal", musky: "Musky", unpleasant: "Unpleasant"
     },
     fragrantWhen: { morning: "Morning", daytime: "Daytime", evening: "Evening", night: "Night" },
-    flowersHeld: { upright: "Upright", arching: "Arching", hanging: "Hanging", below_pot: "Below the pot" },
+    flowersHeld: { upright: "Upright", arching: "Arching", hanging: "Hanging", belowPot: "Below the pot" },
     afterFlowering: {
-      deadhead: "Deadhead", cut_stalk: "Cut the stalk", leave_stalk: "Leave the stalk",
-      never_cut: "Never cut", pinch_buds: "Pinch off buds"
+      deadhead: "Deadhead", cutStalk: "Cut the stalk", leaveStalk: "Leave the stalk",
+      neverCut: "Never cut", pinchBuds: "Pinch off buds"
     },
     type: { species: "Species", hybrid: "Hybrid", intergeneric_hybrid: "Intergeneric hybrid" },
     pest: {
-      spider_mites: "Spider mites", mealybugs: "Mealybugs", scale: "Scale", aphids: "Aphids",
-      thrips: "Thrips", fungus_gnats: "Fungus gnats", whiteflies: "Whiteflies", snails_slugs: "Snails & slugs",
-      root_rot: "Root rot", crown_rot: "Crown rot", black_rot: "Black rot", botrytis: "Botrytis",
-      leaf_spot: "Leaf spot", sunburn: "Sunburn"
+      "spider-mites": "Spider mites", "false-spider-mites": "False spider mites", mealybugs: "Mealybugs",
+      "root-mealybugs": "Root mealybugs", scale: "Scale insects", thrips: "Thrips", aphids: "Aphids",
+      whiteflies: "Whiteflies", "fungus-gnats": "Fungus gnats", "broad-cyclamen-mites": "Broad & cyclamen mites",
+      "snails-slugs": "Snails & slugs", "leaf-spot": "Leaf spot & anthracnose", botrytis: "Botrytis petal blight",
+      "fusarium-wilt": "Fusarium wilt", "powdery-mildew": "Powdery mildew", rust: "Rust",
+      "sooty-mould": "Sooty mould", "southern-blight": "Southern blight", "bacterial-rot": "Bacterial soft rot",
+      "bacterial-brown-spot": "Bacterial brown spot", "crown-rot": "Crown rot", "black-rot": "Black rot",
+      "root-rot": "Root rot", "orchid-viruses": "Orchid viruses", sunburn: "Sunburn", "cold-damage": "Cold damage",
+      "bud-blast": "Bud blast", "fertilizer-burn": "Fertilizer (salt) burn", dehydration: "Dehydration",
+      "low-light": "Too little light", "accordion-leaves": "Accordion (pleated) leaves"
     }
   };
   // Temperature unit: remembered per visitor; US visitors start in °F.
@@ -194,6 +203,48 @@
     return n;
   }
   function r(rangeObj, key) { return rangeObj ? { k: key, v: rangeObj.main, sub: rangeObj.sub } : null; }
+
+  // ---------- The app's format → what this page draws ----------
+  function fromBundle(b) {
+    var sp = (b && b.sp) || {}, h = sp.h || {};
+    function pr(p) {
+      return Array.isArray(p) && (isNum(p[0]) || isNum(p[1])) ? { min: p[0], max: p[1] } : null;
+    }
+    // Bloom months travel as [from, to]; From can be later in the year than To (e.g. Nov–Feb).
+    function monthList(p) {
+      if (!Array.isArray(p)) return [];
+      var a = isNum(p[0]) ? p[0] : p[1], z = isNum(p[1]) ? p[1] : p[0];
+      if (!isNum(a) || a < 1 || a > 12 || z < 1 || z > 12) return [];
+      var out = [a];
+      while (out[out.length - 1] !== z && out.length < 12) out.push(out[out.length - 1] % 12 + 1);
+      return out;
+    }
+    var temps = { tempC: pr(sp.st), humidity: pr(sp.sh) };
+    return {
+      displayName: b && b.from,
+      updatedAt: b && b.updated,
+      name: {
+        kingdom: h.kingdom, phylum: h.phylum, "class": h["class"], order: h.order, family: h.family,
+        subfamily: h.subfamily, tribe: h.tribe, subtribe: h.subtribe,
+        genus: sp.g, speciesEpithet: sp.e, variety: sp.vr, grex: sp.gx, cultivar: sp.c, type: sp.t
+      },
+      wateringRoots: { watering: sp.w, rootAirflow: sp.ra, growsBest: sp.gb, notes: sp.wn },
+      light: { text: sp.li, footCandles: pr(sp.lf), ppfd: pr(sp.pp), dli: pr(sp.dl) },
+      climate: {
+        mode: sp.se === true ? "seasonal" : "allYear",
+        summer: temps, allYear: temps,
+        winter: { tempC: pr(sp.wt), humidity: pr(sp.wh) },
+        elevationM: pr(sp.el), nativeRange: sp.nr
+      },
+      bloom: {
+        flowering: sp.fw, months: monthList(sp.bm), flowersLastDays: pr(sp.fl), color: sp.bc,
+        fragrance: sp.fr, scent: sp.fn, fragrantWhen: sp.ft, flowersHeld: sp.fh,
+        afterFlowering: sp.af ? [sp.af] : [], bloomsOnceThenDies: sp.md === true,
+        nightDropC: sp.nd, dryRestWeeks: sp.dr, photoperiod: pr(sp.ph), notes: sp.bn
+      },
+      plantHealth: sp.pi, careNotes: sp.cn, description: sp.ds
+    };
+  }
 
   // ---------- Visuals ----------
   // Bloom months: a 12-month strip with the flowering months lit.
@@ -358,7 +409,7 @@
       season ? el("p", "season-line", season === "All year" ? "Blooms all year" : "Blooms " + season) : null,
       monthStrip(d.months),
       rows([
-        d.flowering === "rarely_indoors" ? { k: "Flowering", v: "Rarely indoors" } : null,
+        d.flowering === "rarely" ? { k: "Flowering", v: "Rarely indoors" } : null,
         r(range(d.flowersLastDays, d.flowersLastDays && d.flowersLastDays.max === 1 ? " day" : " days"), "Flowers last"),
         { k: "Color", v: hasText(d.color) ? d.color.trim() : null },
         { k: "Fragrance", v: label("fragrance", d.fragrance) },
@@ -369,7 +420,7 @@
         d.bloomsOnceThenDies === true ? { k: "Life cycle", v: "Blooms once, then dies. Keep the pups." } : null,
         isNum(d.nightDropC) ? { k: "Night drop", v: (UNIT === "F" ? fmt(d.nightDropC * 9 / 5) + " °F" : fmt(d.nightDropC) + " °C") + " cooler at night" } : null,
         isNum(d.dryRestWeeks) ? { k: "Dry rest", v: fmt(d.dryRestWeeks) + (d.dryRestWeeks === 1 ? " week" : " weeks") } : null,
-        isNum(d.photoperiodHours) ? { k: "Photoperiod", v: fmt(d.photoperiodHours) + " hours of light" } : null
+        r(range(d.photoperiod, " hours of light"), "Photoperiod")
       ]),
       prose(d.notes)
     ]);
@@ -413,12 +464,11 @@
   }
 
   var CURRENT = null;
-  function render(share, root) {
-    CURRENT = share;
+  function render(raw, root) {
+    CURRENT = raw;
+    var share = fromBundle(raw);
     proseCount = 0;
     var name = share.name || {};
-    var on = Array.isArray(share.sections) ? share.sections : [];
-    function shared(key) { return on.indexOf(key) !== -1; }
 
     root.textContent = "";
     var title = [name.genus, name.speciesEpithet].filter(hasText).join(" ");
@@ -434,13 +484,13 @@
     root.appendChild(meta);
 
     var any = add(root, [
-      shared("wateringRoots") ? sectionWatering(share.wateringRoots) : null,
-      shared("light") ? sectionLight(share.light) : null,
-      shared("climate") ? sectionClimate(share.climate) : null,
-      shared("bloom") ? sectionBloom(share.bloom) : null,
-      shared("plantHealth") ? sectionHealth(share.plantHealth) : null,
-      shared("careNotes") ? sectionText("i-notes", "Care notes", share.careNotes) : null,
-      shared("description") ? sectionText("i-desc", "About this plant", share.description) : null
+      sectionWatering(share.wateringRoots),
+      sectionLight(share.light),
+      sectionClimate(share.climate),
+      sectionBloom(share.bloom),
+      sectionHealth(share.plantHealth),
+      sectionText("i-notes", "Care notes", share.careNotes),
+      sectionText("i-desc", "About this plant", share.description)
     ]);
     if (!any) root.appendChild(el("p", "state", "The grower hasn't added care details to this sheet yet."));
   }
