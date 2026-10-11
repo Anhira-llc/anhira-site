@@ -1,0 +1,73 @@
+{
+  "v": 1,
+  "id": "testbrachy",
+  "updated": "2026-10-11",
+  "listed": false,
+  "key": "name:brachypeza semiteretifolia",
+  "sp": {
+    "g": "Brachypeza",
+    "e": "semiteretifolia",
+    "h": {
+      "kingdom": "Plantae",
+      "phylum": "Tracheophyta",
+      "class": "Liliopsida",
+      "order": "Asparagales",
+      "family": "Orchidaceae",
+      "subfamily": "Epidendroideae",
+      "tribe": "Vandeae",
+      "subtribe": "Aeridinae"
+    },
+    "gb": "either",
+    "w": "keepMoist",
+    "ra": "high",
+    "lf": [
+      1800,
+      2800
+    ],
+    "se": true,
+    "st": [
+      18,
+      27
+    ],
+    "sh": [
+      80,
+      85
+    ],
+    "wt": [
+      13,
+      27
+    ],
+    "wh": [
+      65,
+      80
+    ],
+    "el": [
+      1000,
+      1500
+    ],
+    "fw": "blooms",
+    "bm": [
+      1,
+      12
+    ],
+    "fl": [
+      7,
+      14
+    ],
+    "bc": "White, flat flowers about 2 cm across, one per stem.",
+    "fh": "arching",
+    "af": "leaveStalk",
+    "nd": 12,
+    "dr": 10,
+    "pi": [
+      "spider-mites",
+      "scale"
+    ],
+    "li": "Bright, filtered light. Keep it out of hot afternoon sun.",
+    "nr": "Vietnam: the highlands around Da Lat, on twigs and outer branches in evergreen forest",
+    "wn": "Growing season (spring to autumn)\nKeep the roots evenly moist while new leaves and roots are forming, then water a little less as the growth matures.\n\nWinter\nAbout two drier months: let it dry slightly between waterings, but never leave it dry for long. Mounted plants dry fast, so check them daily.",
+    "bn": "Can flower at any time of year. Each stem carries a single flat, white, fragrant flower about 2 cm across, often several stems at once.",
+    "cn": "Cool-growing miniature\nComes from 1,000–1,500 m in the Vietnamese highlands, so it likes warm days and clearly cooler nights, especially in winter.\n\nAir and humidity\nGive it constant air movement and high humidity (80–85% in summer). Stagnant, damp air invites rot.\n\nPotting or mounting\nGrows mounted or in a small, shallow pot. Potted: medium fir bark or tree fern with coarse perlite, a little sphagnum and charcoal. Repot only when the mix breaks down, ideally as new roots start.\n\nFeeding\nWeekly at 1/4 to 1/2 strength while growing. Cut back watering and feeding for 2–3 months in winter.",
+    "ds": "A miniature monopodial epiphyte with narrow, semi-terete leaves, growing on the outer twigs of forest trees.\n\nPreviously known as Pteroceras semiteretifolium. Kew's Plants of the World Online now treats it as a synonym of Brachypeza uniflora."
+  }
+}
