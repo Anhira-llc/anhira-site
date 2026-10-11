@@ -16,8 +16,18 @@
   "use strict";
 
   // ---------- Where shares come from ----------
-  // V1 test: ids starting with "test" load a file from /s/test/.
-  // Next step: everything else will load from the CloudKit public database.
+  // Real care sheets: the CloudKit public database (record type "CareSheet", record name = id,
+  // field "json" = the care sheet), read with CloudKit Web Services and a read-only API token.
+  // Hand-made test sheets (ids starting "test") are files in /s/test/.
+  var CLOUDKIT = {
+    container: "iCloud.com.anhira.rootnote",
+    // "development" while testing with Xcode builds; "production" once TestFlight/App Store
+    // builds share (and the schema has been deployed to Production).
+    environment: "development",
+    // CloudKit Console → API Access → Tokens. Public: it can only read the public database.
+    apiToken: ""
+  };
+
   var ShareSource = {
     load: function (id) {
       if (/^test/.test(id)) {
@@ -28,8 +38,24 @@
             return r.json();
           });
       }
-      // CloudKit is not connected yet, so any other id is "not shared".
-      return Promise.resolve(null);
+      if (!CLOUDKIT.apiToken) return Promise.resolve(null);
+      var url = "https://api.apple-cloudkit.com/database/1/" + CLOUDKIT.container + "/" +
+        CLOUDKIT.environment + "/public/records/lookup?ckAPIToken=" + encodeURIComponent(CLOUDKIT.apiToken);
+      return fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ records: [{ recordName: id }] })
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error("cloudkit " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          var rec = data && data.records && data.records[0];
+          if (!rec || rec.serverErrorCode) return null;          // NOT_FOUND → no longer shared
+          var json = rec.fields && rec.fields.json && rec.fields.json.value;
+          return json ? JSON.parse(json) : null;
+        });
     }
   };
 
@@ -38,6 +64,9 @@
     growsBest: { potted: "Potted", mounted: "Mounted", either: "Potted or mounted" },
     watering: { keepMoist: "Keep moist", slightlyDry: "Slightly dry", dryOut: "Dry out fully" },
     rootAirflow: { low: "Low", medium: "Medium", high: "High" },
+    feedingFrequency: { weekly: "Weekly", everyTwoWeeks: "Every 2 weeks", monthly: "Monthly" },
+    feedingStrength: { quarter: "¼ strength", half: "½ strength", full: "Full strength" },
+    feedingWinter: { same: "Same", less: "Less", stop: "Stop" },
     flowering: { blooms: "Blooms", rarely: "Rarely indoors", never: "Never" },
     fragrance: { none: "None", faint: "Faint", moderate: "Moderate", strong: "Strong" },
     scent: {
@@ -143,7 +172,7 @@
   function stats(items) { // [{k, v, sub}]
     items = items.filter(function (i) { return i && i.v; });
     if (!items.length) return null;
-    var g = el("div", "sh-stats");
+    var g = el("div", "sh-stats" + (items.length === 4 ? " two" : ""));   // 4 → a tidy 2 × 2
     items.forEach(function (i) {
       var s = el("div", "sh-stat");
       s.appendChild(el("span", "k", i.k));
@@ -228,7 +257,11 @@
         subfamily: h.subfamily, tribe: h.tribe, subtribe: h.subtribe,
         genus: sp.g, speciesEpithet: sp.e, variety: sp.vr, grex: sp.gx, cultivar: sp.c, type: sp.t
       },
-      wateringRoots: { watering: sp.w, rootAirflow: sp.ra, growsBest: sp.gb, notes: sp.wn },
+      wateringRoots: {
+        watering: sp.w, winterWatering: sp.se === true ? sp.ww : null,
+        rootAirflow: sp.ra, growsBest: sp.gb, notes: sp.wn
+      },
+      feeding: { frequency: sp.fq, strength: sp.fs, winter: sp.fz },
       light: { text: sp.li, footCandles: pr(sp.lf), ppfd: pr(sp.pp), dli: pr(sp.dl) },
       climate: {
         mode: sp.se === true ? "seasonal" : "allYear",
@@ -334,13 +367,28 @@
   function sectionWatering(d) {
     if (!d) return null;
     var c = card("i-water", "Watering & roots");
+    var winter = label("watering", d.winterWatering);
     var n = add(c, [
       stats([
-        { k: "Watering", v: label("watering", d.watering) },
-        { k: "Root airflow", v: label("rootAirflow", d.rootAirflow) },
+        { k: winter ? "Summer watering" : "Watering", v: label("watering", d.watering) },
+        winter ? { k: "Winter watering", v: winter } : null,
+        { k: "Air movement", v: label("rootAirflow", d.rootAirflow) },
         { k: "Grows best", v: label("growsBest", d.growsBest) }
       ]),
       prose(d.notes)
+    ]);
+    return n ? c : null;
+  }
+
+  function sectionFeeding(d) {
+    if (!d) return null;
+    var c = card("i-feed", "Feeding");
+    var n = add(c, [
+      stats([
+        { k: "How often", v: label("feedingFrequency", d.frequency) },
+        { k: "Strength", v: label("feedingStrength", d.strength) },
+        { k: "In winter", v: label("feedingWinter", d.winter) }
+      ])
     ]);
     return n ? c : null;
   }
@@ -485,6 +533,7 @@
 
     var any = add(root, [
       sectionWatering(share.wateringRoots),
+      sectionFeeding(share.feeding),
       sectionLight(share.light),
       sectionClimate(share.climate),
       sectionBloom(share.bloom),

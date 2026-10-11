@@ -84,6 +84,7 @@
 }
 
 .i-water   { background: #4fc3f7; color: rgba(79, 195, 247, 0.6); }
+.i-feed    { background: #3ddc97; color: rgba(61, 220, 151, 0.6); }
 .i-light   { background: #fab152; color: rgba(250, 177, 82, 0.6); }
 .i-climate { background: #fab152; color: rgba(250, 177, 82, 0.6); }
 .i-bloom   { background: #b084eb; color: rgba(176, 132, 235, 0.6); }
@@ -97,6 +98,8 @@
   gap: 12px;
   margin-bottom: 14px;
 }
+
+.sh-stats.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 .sh-stat, .sh-season { display: flex; flex-direction: column; }
 .sh-stat .k, .sh-season .k { font-size: 13px; color: var(--muted); }
