@@ -39,7 +39,7 @@
             return r.json();
           });
       }
-      if (!CLOUDKIT.apiToken) return Promise.resolve(null);
+      if (!CLOUDKIT.apiToken) return Promise.reject(new Error("CloudKit token missing in share.js"));
       var url = "https://api.apple-cloudkit.com/database/1/" + CLOUDKIT.container + "/" +
         CLOUDKIT.environment + "/public/records/lookup?ckAPIToken=" + encodeURIComponent(CLOUDKIT.apiToken);
       return fetch(url, {
@@ -48,12 +48,16 @@
         body: JSON.stringify({ records: [{ recordName: id }] })
       })
         .then(function (r) {
-          if (!r.ok) throw new Error("cloudkit " + r.status);
+          if (!r.ok) {
+            return r.text().then(function (t) { throw new Error("CloudKit " + r.status + ": " + t); });
+          }
           return r.json();
         })
         .then(function (data) {
           var rec = data && data.records && data.records[0];
-          if (!rec || rec.serverErrorCode) return null;          // NOT_FOUND → no longer shared
+          if (!rec) throw new Error("CloudKit: empty reply");
+          if (rec.serverErrorCode === "NOT_FOUND") return null;  // deleted → "No longer shared"
+          if (rec.serverErrorCode) throw new Error("CloudKit " + rec.serverErrorCode + ": " + (rec.reason || ""));
           var json = rec.fields && rec.fields.json && rec.fields.json.value;
           if (!json) return null;
           var sheet = JSON.parse(json);
@@ -608,7 +612,8 @@
       render(share, root);
     }
     after.hidden = false;
-  }).catch(function () {
+  }).catch(function (err) {
+    console.warn("Veya share:", err);   // Safari: Develop → Show JavaScript Console
     showState(root, "Couldn't load", "Check your connection and try again.");
     after.hidden = false;
     report.hidden = true;
