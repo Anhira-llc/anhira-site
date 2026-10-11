@@ -63,7 +63,7 @@
     "nd": 12,
     "dr": 10,
     "fq": "weekly",
-    "fs": "quarter",
+    "fs": "half",
     "fz": "less",
     "pi": [
       "spider-mites",
