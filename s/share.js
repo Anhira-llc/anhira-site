@@ -25,7 +25,8 @@
     // builds share (and the schema has been deployed to Production).
     environment: "development",
     // CloudKit Console → API Access → Tokens. Public: it can only read the public database.
-    apiToken: ""
+    // Token "anhira website" (Development). Production needs its own token later.
+    apiToken: "638a49b21c91833468eb6e844dce442c6d19008c7f06d331f005c7aa58b44cd6"
   };
 
   var ShareSource = {
