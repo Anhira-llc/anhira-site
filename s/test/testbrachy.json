@@ -1,5 +1,7 @@
 {
   "v": 1,
+  "from": "Veya test sheet",
+  "place": "Okemos, MI",
   "id": "testbrachy",
   "updated": "2026-10-11",
   "listed": false,
@@ -25,6 +27,7 @@
       2800
     ],
     "se": true,
+    "ww": "slightlyDry",
     "st": [
       18,
       27
@@ -59,6 +62,9 @@
     "af": "leaveStalk",
     "nd": 12,
     "dr": 10,
+    "fq": "weekly",
+    "fs": "quarter",
+    "fz": "less",
     "pi": [
       "spider-mites",
       "scale"

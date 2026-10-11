@@ -44,6 +44,17 @@
 
 .sh-meta .by { color: var(--text); font-weight: 500; }
 .sh-meta .ok { color: var(--accent); }
+.sh-meta .place { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+
+.sh-photo {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 20px;
+  margin: 0 0 18px;
+  border: 1px solid var(--line);
+}
 
 .sh-card {
   background: var(--surface);

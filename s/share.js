@@ -54,7 +54,12 @@
           var rec = data && data.records && data.records[0];
           if (!rec || rec.serverErrorCode) return null;          // NOT_FOUND → no longer shared
           var json = rec.fields && rec.fields.json && rec.fields.json.value;
-          return json ? JSON.parse(json) : null;
+          if (!json) return null;
+          var sheet = JSON.parse(json);
+          // The species photo is its own field (an Asset); CloudKit gives a temporary download link.
+          var photo = rec.fields.photo && rec.fields.photo.value;
+          if (photo && photo.downloadURL) sheet._photoURL = photo.downloadURL.replace("${f}", "photo.jpg");
+          return sheet;
         });
     }
   };
@@ -251,6 +256,8 @@
     var temps = { tempC: pr(sp.st), humidity: pr(sp.sh) };
     return {
       displayName: b && b.from,
+      place: b && b.from ? b.place : null,
+      photoURL: b && b._photoURL,
       updatedAt: b && b.updated,
       name: {
         kingdom: h.kingdom, phylum: h.phylum, "class": h["class"], order: h.order, family: h.family,
@@ -511,6 +518,13 @@
     return wrap;
   }
 
+  // Apple Maps on Apple devices, Google Maps everywhere else.
+  function mapsLink(place) {
+    var apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+    return apple ? "https://maps.apple.com/?q=" + encodeURIComponent(place)
+                 : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(place);
+  }
+
   var CURRENT = null;
   function render(raw, root) {
     CURRENT = raw;
@@ -522,8 +536,26 @@
     var title = [name.genus, name.speciesEpithet].filter(hasText).join(" ");
     if (title) document.title = title + " · Care sheet · Veya";
 
+    if (share.photoURL) {
+      var img = el("img", "sh-photo");
+      img.src = share.photoURL;
+      img.alt = title ? "Photo of " + title : "Plant photo";
+      img.onerror = function () { img.remove(); };
+      root.appendChild(img);
+    }
+
     var meta = el("p", "sh-meta");
-    meta.appendChild(el("span", "by", "Care sheet shared by " + (hasText(share.displayName) ? share.displayName.trim() : "a Veya grower")));
+    var by = el("span", "by", "Care sheet shared by " + (hasText(share.displayName) ? share.displayName.trim() : "a Veya grower"));
+    if (hasText(share.displayName) && hasText(share.place)) {
+      // A map search for what they typed — never a web link from the sharer.
+      by.appendChild(document.createTextNode(" · "));
+      var a = el("a", "place", share.place.trim());
+      a.href = mapsLink(share.place.trim());
+      a.target = "_blank";
+      a.rel = "noopener";
+      by.appendChild(a);
+    }
+    meta.appendChild(by);
     var upd = dateText(share.updatedAt);
     if (upd) meta.appendChild(el("span", null, "Updated " + upd));
     if (name.gbifMatch === "exact") meta.appendChild(el("span", "ok", "Name verified with GBIF"));
@@ -564,7 +596,7 @@
   }
 
   var report = document.getElementById("report");
-  report.href = "mailto:support@anhira.net?subject=" + encodeURIComponent("Report a shared care sheet (" + id + ")") +
+  report.href = "mailto:report@anhira.net?subject=" + encodeURIComponent("Report care sheet " + id) +
     "&body=" + encodeURIComponent("Care sheet: " + location.href + "\n\nWhat's wrong with it:\n");
 
   ShareSource.load(id).then(function (share) {
