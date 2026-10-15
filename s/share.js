@@ -23,10 +23,10 @@
     container: "iCloud.com.anhira.rootnote",
     // "development" while testing with Xcode builds; "production" once TestFlight/App Store
     // builds share (and the schema has been deployed to Production).
-    environment: "development",
+    environment: "production",
     // CloudKit Console → API Access → Tokens. Public: it can only read the public database.
-    // Token "anhira website" (Development). Production needs its own token later.
-    apiToken: "638a49b21c91833468eb6e844dce442c6d19008c7f06d331f005c7aa58b44cd6"
+    // Token "anhira website (production)". Dev token "anhira website": 638a49b21c91833468eb6e844dce442c6d19008c7f06d331f005c7aa58b44cd6
+    apiToken: "238ba020f36c19d95ea4ed0c015d5041c96452922c4539f05511a1d10ecf8739"
   };
 
   var ShareSource = {
