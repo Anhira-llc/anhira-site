@@ -1,0 +1,72 @@
+{
+  "v": 1,
+  "from": "Veya test sheet",
+  "place": "Okemos, MI",
+  "id": "testgomesa",
+  "updated": "2026-10-15",
+  "listed": false,
+  "key": "name:gomesa radicans",
+  "sp": {
+    "g": "Gomesa",
+    "e": "radicans",
+    "h": {
+      "kingdom": "Plantae",
+      "phylum": "Tracheophyta",
+      "class": "Liliopsida",
+      "order": "Asparagales",
+      "family": "Orchidaceae",
+      "subfamily": "Epidendroideae",
+      "tribe": "Cymbidieae",
+      "subtribe": "Oncidiinae"
+    },
+    "gb": "either",
+    "w": "keepMoist",
+    "se": true,
+    "ww": "slightlyDry",
+    "ra": "high",
+    "fs": "quarter",
+    "fz": "less",
+    "lf": [
+      1400,
+      2100
+    ],
+    "st": [
+      18,
+      30
+    ],
+    "sh": [
+      65,
+      70
+    ],
+    "wt": [
+      9,
+      20
+    ],
+    "wh": [
+      75,
+      80
+    ],
+    "el": [
+      450,
+      1300
+    ],
+    "nd": 10,
+    "fw": "blooms",
+    "bm": [
+      8,
+      11
+    ],
+    "fl": [
+      28,
+      28
+    ],
+    "fh": "arching",
+    "bc": "Tiny dove-shaped flowers, 0.6–1 cm across: white to greenish white with a yellow lip, sometimes marked orange, with a dark purple spot.",
+    "li": "Bright, filtered light, never direct sun (about 15,000–23,000 lux). Good air movement.",
+    "nr": "Southern and southeastern Brazil, from Rio Grande do Sul north to Espírito Santo, in humid montane forest, often along rivers",
+    "wn": "Growing season\nKeep it evenly moist and water more while it's growing. Don't let the roots sit soggy or dry out completely.\n\nWinter\nAn optional, gentle rest: water a little less, especially if your winter light is low, but never let the pseudobulbs or the mix shrivel.\n\nMounted\nMounts dry fast: in summer, water or mist daily.",
+    "bn": "Thin, curved flower stems up to about 18 cm, from late summer into autumn. Healthy plants can flower twice a year, in spring and autumn. Flowers last about 4 weeks.",
+    "cn": "Easy miniature\nA small clumping plant, up to about 23 cm, that builds into a specimen clump over a few years.\n\nTemperatures\nWarm days and clearly cooler nights: summer 29–31 °C by day, 18–20 °C at night; winter around 20 °C by day, 9–10 °C at night.\n\nPotting or mounting\nGrows well mounted on bark, if you can keep the humidity up. Or use a small, shallow pot or basket with a very open, fast-draining mix. Repot often, before the mix breaks down, and divide when new growth starts.\n\nFeeding\n¼ to ½ strength. Balanced or higher-nitrogen from spring to midsummer, then a bloom (higher-phosphorus) feed until late autumn. Feed less or stop in winter.",
+    "ds": "A miniature epiphyte, sometimes growing on rocks, that roots into the organic matter collecting among its small pseudobulbs.\n\nAlso known as Ornithophora radicans and Sigmatostalix radicans."
+  }
+}
